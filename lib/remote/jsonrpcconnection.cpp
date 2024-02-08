@@ -83,6 +83,8 @@ void JsonRpcConnection::HandleIncomingMessages(boost::asio::yield_context yc)
 			CpuBoundWork handleMessage (yc);
 
 			MessageHandler(message);
+
+			l_TaskStats.InsertValue(Utility::GetTime(), 1);
 		} catch (const std::exception& ex) {
 			if (!m_ShuttingDown) {
 				Log(LogWarning, "JsonRpcConnection")
@@ -92,10 +94,6 @@ void JsonRpcConnection::HandleIncomingMessages(boost::asio::yield_context yc)
 
 			break;
 		}
-
-		CpuBoundWork taskStats (yc);
-
-		l_TaskStats.InsertValue(Utility::GetTime(), 1);
 	}
 
 	Disconnect();
