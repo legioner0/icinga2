@@ -170,21 +170,23 @@ ConnectionRole JsonRpcConnection::GetRole() const
 	return m_Role;
 }
 
-void JsonRpcConnection::SendMessage(const Dictionary::Ptr& message)
+bool JsonRpcConnection::SendMessage(const Dictionary::Ptr& message)
 {
 	if (m_ShuttingDown) {
-		return;
+		return false;
 	}
 
 	Ptr keepAlive (this);
 
 	m_IoStrand.post([this, keepAlive, message]() { SendMessageInternal(message); });
+
+	return true;
 }
 
-void JsonRpcConnection::SendRawMessage(const String& message)
+bool JsonRpcConnection::SendRawMessage(const String& message)
 {
 	if (m_ShuttingDown) {
-		return;
+		return false;
 	}
 
 	Ptr keepAlive (this);
@@ -197,6 +199,8 @@ void JsonRpcConnection::SendRawMessage(const String& message)
 		m_OutgoingMessagesQueue.emplace_back(message);
 		m_OutgoingMessagesQueued.Set();
 	});
+
+	return true;
 }
 
 void JsonRpcConnection::SendMessageInternal(const Dictionary::Ptr& message)
