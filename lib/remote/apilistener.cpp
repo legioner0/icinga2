@@ -438,14 +438,15 @@ void ApiListener::ListenerCoroutineProc(boost::asio::yield_context yc, const std
 
 			server->async_accept(sslConn->lowest_layer(), yc);
 
+			auto remoteEndpoint (sslConn->lowest_layer().remote_endpoint());
+
 			auto strand (Shared<asio::io_context::strand>::Make(io));
 
-			IoEngine::SpawnCoroutine(*strand, [this, strand, sslConn](asio::yield_context yc) {
+			IoEngine::SpawnCoroutine(*strand, [this, strand, sslConn, remoteEndpoint](asio::yield_context yc) {
 				Timeout::Ptr timeout(new Timeout(strand->context(), *strand, boost::posix_time::microseconds(int64_t(GetConnectTimeout() * 1e6)),
-					[sslConn](asio::yield_context yc) {
+					[sslConn, remoteEndpoint](asio::yield_context yc) {
 						Log(LogWarning, "ApiListener")
-							<< "Timeout while processing incoming connection from "
-							<< sslConn->lowest_layer().remote_endpoint();
+							<< "Timeout while processing incoming connection from " << remoteEndpoint;
 
 						boost::system::error_code ec;
 						sslConn->lowest_layer().cancel(ec);
