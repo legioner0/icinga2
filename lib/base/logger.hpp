@@ -7,7 +7,6 @@
 #include "base/logger-ti.hpp"
 #include <set>
 #include <iosfwd>
-#include <boost/stacktrace.hpp>
 
 namespace icinga
 {
@@ -148,8 +147,7 @@ public:
 	{
 		auto duration = std::chrono::steady_clock::now() - m_Start;
 		if (duration >= std::chrono::seconds(5)) {
-			*this << " (" << std::chrono::duration_cast<std::chrono::milliseconds>(duration).count() << "ms)\n"
-				<< boost::stacktrace::stacktrace();
+			*this << " (" << std::chrono::duration_cast<std::chrono::milliseconds>(duration).count() << "ms)";
 		}
 	}
 
