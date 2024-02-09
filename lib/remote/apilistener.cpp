@@ -1254,7 +1254,6 @@ void ApiListener::OpenLogFile()
 	}
 
 	m_LogFile = new StdioStream(fp, true);
-	m_LogMessageCount = 0;
 	SetLogMessageTimestamp(Utility::GetTime());
 }
 
@@ -1283,6 +1282,9 @@ void ApiListener::RotateLogFile()
 	// don't overwrite the previous one, but silently deny rotation.
 	if (!Utility::PathExists(newpath)) {
 		(void) rename(oldpath.CStr(), newpath.CStr());
+
+		// We're rotating the current log file, so reset the log message counter as well.
+		m_LogMessageCount = 0;
 	}
 }
 
