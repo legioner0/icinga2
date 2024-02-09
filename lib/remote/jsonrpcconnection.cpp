@@ -155,6 +155,11 @@ bool JsonRpcConnection::IsAuthenticated() const
 	return m_Authenticated;
 }
 
+bool JsonRpcConnection::IsShuttingDown() const
+{
+	return m_ShuttingDown;
+}
+
 Endpoint::Ptr JsonRpcConnection::GetEndpoint() const
 {
 	return m_Endpoint;
